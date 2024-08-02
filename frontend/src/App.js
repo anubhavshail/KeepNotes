@@ -3,6 +3,8 @@ import './App.css';
 import Register from './components/Register';
 import Login from './components/Login';
 import { BrowserRouter as Router, Route, Routes, Link} from 'react-router-dom';
+import NoteForm from './components/NoteForm';
+import NoteList from './components/NoteList';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -15,6 +17,10 @@ function App() {
     }
   }, [token]);
 
+  const handleLogout = () => {
+    setToken(null);
+  }
+
   return (
     <Router>
       <div>
@@ -26,6 +32,17 @@ function App() {
         <Routes>
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login setToken={setToken}/>} />
+          <Route path='/notes' element={
+            token? (
+              <>
+                <NoteForm token={token} onNoteAdded={() => {}} />
+                <NoteList token={token}/>
+                <button onClick={handleLogout}>Logout</button>
+              </>
+            ) : (
+              <p>Please login to view your notes.</p>
+            )
+          } />
         </Routes>
       </div>
     </Router>
