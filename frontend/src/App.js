@@ -8,6 +8,7 @@ import NoteList from './components/NoteList';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [refreshNotes, setRefreshNotes] = useState(0);
 
   useEffect(() => {
     if(token) {
@@ -16,6 +17,10 @@ function App() {
       localStorage.removeItem('token');
     }
   }, [token]);
+
+  const handleNotAdded = () => {
+    setRefreshNotes(prev => prev + 1);
+  }
 
   const handleLogout = () => {
     setToken(null);
@@ -27,6 +32,7 @@ function App() {
         <nav>
           <li><Link to="/register">Register</Link></li>
           <li><Link to="/login">Login</Link></li>
+          <li><Link to="/notes">Notes</Link></li>
         </nav>
 
         <Routes>
@@ -35,8 +41,8 @@ function App() {
           <Route path='/notes' element={
             token? (
               <>
-                <NoteForm token={token} onNoteAdded={() => {}} />
-                <NoteList token={token}/>
+                <NoteForm token={token} onNoteAdded={handleNotAdded} />
+                <NoteList token={token} refreshTrigger={refreshNotes}/>
                 <button onClick={handleLogout}>Logout</button>
               </>
             ) : (

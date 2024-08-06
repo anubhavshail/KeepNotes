@@ -10,7 +10,7 @@ const NoteForm = ({token, onNoteAdded}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:3000/api/notes', {title, content});
+            await axios.post('http://localhost:3000/api/notes', {title, content}, {headers: {Authorization: `Bearer ${token}`}});
             setTitle('');
             setContent('');
             onNoteAdded();
