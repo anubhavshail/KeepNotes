@@ -48,6 +48,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({ id: user.rows[0].id }, jwtSecret, { expiresIn: '5h'});
         res.json({token});
     } catch(err) {
+        
         console.error(err.message);
         res.status(500).send('Server Error');
     }

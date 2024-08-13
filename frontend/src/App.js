@@ -5,6 +5,7 @@ import Login from './components/Login';
 import { BrowserRouter as Router, Route, Routes, Link} from 'react-router-dom';
 import NoteForm from './components/NoteForm';
 import NoteList from './components/NoteList';
+import { BaseStyles, ThemeProvider } from '@primer/react';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -28,31 +29,35 @@ function App() {
 
   return (
     <Router>
-      <div>
-        <nav>
-          <li><Link to="/register">Register</Link></li>
-          <li><Link to="/login">Login</Link></li>
-          <li><Link to="/notes">Notes</Link></li>
-        </nav>
+      <ThemeProvider colorMode='auto'>
+        <BaseStyles>
+          <div>
+            <nav>
+              <li><Link to="/register">Register</Link></li>
+              <li><Link to="/login">Login</Link></li>
+              <li><Link to="/notes">Notes</Link></li>
+            </nav>
 
-        <Routes>
-          <Route path='/register' element={<Register />} />
-          <Route path='/login' element={<Login setToken={setToken}/>} />
-          <Route path='/notes' element={
-            token? (
-              <>
-                <NoteForm token={token} onNoteAdded={handleNotAdded} />
-                <NoteList token={token} refreshTrigger={refreshNotes}/>
-                <button onClick={handleLogout}>Logout</button>
-              </>
-            ) : (
-              <p>Please login to view your notes.</p>
-            )
-          } />
-        </Routes>
-      </div>
+            <Routes>
+              <Route path='/register' element={<Register />} />
+              <Route path='/login' element={<Login setToken={setToken}/>} />
+              <Route path='/notes' element={
+                token? (
+                  <>
+                    <NoteForm token={token} onNoteAdded={handleNotAdded} />
+                    <NoteList token={token} refreshTrigger={refreshNotes}/>
+                    <button onClick={handleLogout}>Logout</button>
+                  </>
+                ) : (
+                  <p>Please login to view your notes.</p>
+                )
+              } />
+            </Routes>
+          </div>
+        </BaseStyles>
+      </ThemeProvider>
     </Router>
+    
   );
 }
-
 export default App;

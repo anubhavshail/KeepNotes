@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Box } from "@primer/react";
 
 const Register = () => {
     const [username, setUserName] = useState('');
@@ -18,12 +19,15 @@ const Register = () => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <Box sx={{p:3, borderStyle: "solid", borderWidth: 1}}>
+            <form onSubmit={handleSubmit}>
             <input type="text" value={username} onChange={(e) => setUserName(e.target.value)} placeholder="Username" required />
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
             <button type="submit">Register</button>
         </form>
+        </Box>
+        
     )
 }
 
