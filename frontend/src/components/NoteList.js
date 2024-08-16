@@ -1,3 +1,4 @@
+import { Box, Button, Heading, Text } from "@primer/react";
 import axios from "axios";
 import { useEffect, useState } from "react"
 
@@ -29,16 +30,41 @@ const NoteList = ({ token, refreshTrigger }) => {
     }
 
     return (
-        <div>
-            <h2>Your Notes</h2>
-            {notes.map(note => (
-                <div key={note.id}>
-                    <h3>{note.title}</h3>
-                    <p>{note.content}</p>
-                    <button type="button" onClick={() =>handleDelete(note.id)}>Delete</button>
-                </div>
-            ))}
-        </div>
+        <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            p: 4,
+            alignItems: "center",
+            width: '100%'
+        }}>
+            <Heading as="h2" >Your Notes</Heading>
+            <Box sx={{
+                display: 'grid',
+                gap: 3,
+                gridTemplateColumns: 'repeat(autofill, minmax(300px, 1fr))',
+                width: '100%',
+                maxWidth: '1024px'
+                }}>
+                {notes.map(note => (
+                    <Box sx={{
+                        bg: 'canvas.overlay',
+                        borderRadius: 3,
+                        position: "relative",
+                        boxShadow: "shadow.small",
+                        p: 3
+                    }}>
+                        <Heading as="h5">{note.title}</Heading>
+                        <Text as="p">{note.content}</Text>
+                        <Button variant="danger" onClick={() => handleDelete(note.id)} sx={{
+                            position: "absolute",
+                            bottom: '10px',
+                            right: '10px'
+                        }}>Delete</Button>
+                    </Box>
+                ))}
+            </Box>
+        </Box>
+        
     );
 };
 

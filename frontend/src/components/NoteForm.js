@@ -1,3 +1,4 @@
+import { Box, Button, Textarea, TextInput } from "@primer/react";
 import axios from "axios";
 import { useState } from "react";
 
@@ -20,11 +21,18 @@ const NoteForm = ({token, onNoteAdded}) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" required/>
-            <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Content" required />
-            <button type="submit">Add Note</button>        
-        </form>
+        <Box as="form"
+        onSubmit={handleSubmit}
+        sx={{
+            p:3,
+            mx: 'auto',
+            backgroundColor: 'canvas.default',
+            width: '800px'
+        }}>
+            <TextInput block value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" required sx={{ mb: 3}}/>
+            <Textarea block value={content} onChange={(e) => setContent(e.target.value)} placeholder="Content" required sx={{ mb: 3}}/>
+            <Button block type="submit" variant="default">Add Note</Button>
+        </Box>
     );
 };
 
