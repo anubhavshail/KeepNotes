@@ -15,9 +15,28 @@ const authenticateToken = (req, res, next) => {
         req.user = verified;
         next();
     } catch (err) {
-        res.status(400).send('Invalid Token');
+        res.status(400).json({
+            valid: false,
+            message: 'Invalid Token',
+        });
     }
 };
+
+router.get('/validateToken', authenticateToken, async (req, res) => {
+    try {
+        res.json({
+            valid: true,
+            message: 'Token is Valid',
+            user: req.user
+        })
+    } catch (err) {
+        res.status(500).json({
+            valid: false,
+            message: 'An error occured while validating the token',
+            error: err.message
+        })
+    }
+})
 
 router.post('/register', async (req, res) => {
     try {
@@ -62,10 +81,12 @@ router.route('/notes')
     .get( authenticateToken, async (req, res) => {
         try {
             const allNotes = await pool.query('SELECT * FROM notes WHERE user_id = $1;', [req.user.id]);
+            console.log(allNotes.rows);
+            
             res.json(allNotes.rows);
         } catch (err) {
             console.error(err.message);
-            res.status(500).send("Server Erro");
+            res.status(500).send("Server Error");
         }
     })
 
@@ -123,6 +144,19 @@ router.route('/notes/:id')
         } catch (err) {
             console.error(err.message);
             res.status(500).send("Server Error");
+        }
+    })
+
+router.route('/user')
+    .get( authenticateToken, async (req, res) => {
+        try {
+            const user = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+
+            if(user.rows.length === 0) return res.status(403).send('Access Denied');
+            res.json(user.rows[0]);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Server Error');
         }
     })
 

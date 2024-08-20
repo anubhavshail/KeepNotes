@@ -1,11 +1,14 @@
-import { Box, Button, Heading, Text } from "@primer/react";
+import { Box, Button, Dialog, Heading, Text } from "@primer/react";
 import axios from "axios";
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 
 
 const NoteList = ({ token, refreshTrigger }) => {
     const [notes, setNotes] = useState([]);
+    const [isOpen, setIsOpen] = useState(false)
+    const [selectedNote, setSelectedNote] = useState({title: '', content: ''})
+    const returnFocusRef = useRef(null)
 
     useEffect(() => {
         const fetchNotes = async () => {
@@ -29,32 +32,46 @@ const NoteList = ({ token, refreshTrigger }) => {
         }
     }
 
+    const handleDialog = async (noteId) => {
+        try {
+            const res = await axios.get(`http://localhost:3000/api/notes/${noteId}`, {headers: { Authorization: `Bearer ${token}` }});
+            setSelectedNote({
+                title: res.data.title,
+                content: res.data.content
+            });
+            setIsOpen(true)
+        } catch (err) {
+            console.error('Error fetching note:', err);
+        }
+    }
+
     return (
         <Box sx={{
-            display: "flex",
-            flexDirection: "column",
-            p: 4,
-            alignItems: "center",
-            width: '100%'
+            p: 4,    
         }}>
-            <Heading as="h2" >Your Notes</Heading>
+            <Heading as="h2" sx={{ textAlign: "center", mb: 2}} >Your Notes</Heading>
             <Box sx={{
                 display: 'grid',
                 gap: 3,
-                gridTemplateColumns: 'repeat(autofill, minmax(300px, 1fr))',
-                width: '100%',
-                maxWidth: '1024px'
+                gridTemplateColumns: 'auto auto auto',
                 }}>
                 {notes.map(note => (
-                    <Box sx={{
-                        bg: 'canvas.overlay',
-                        borderRadius: 3,
+                    <Box 
+                    data-testid="trigger-button"
+                    ref={returnFocusRef}
+                    onClick={() => handleDialog(note.id)}
+                    sx={{
+                        bg: 'canvas.default',
+                        borderStyle: "solid",
+                        borderColor: "border.default",
+                        borderWidth: .5,
+                        borderRadius: 2,
                         position: "relative",
                         boxShadow: "shadow.small",
-                        p: 3
-                    }}>
+                        p: 3,
+                        }}>
                         <Heading as="h5">{note.title}</Heading>
-                        <Text as="p">{note.content}</Text>
+                        <Text as="p">{note.content.substring(0,50)} ...</Text>
                         <Button variant="danger" onClick={() => handleDelete(note.id)} sx={{
                             position: "absolute",
                             bottom: '10px',
@@ -62,6 +79,18 @@ const NoteList = ({ token, refreshTrigger }) => {
                         }}>Delete</Button>
                     </Box>
                 ))}
+                <Dialog
+                    returnFocusRef={returnFocusRef}
+                    isOpen={isOpen}
+                    onDismiss={() => setIsOpen(false)}
+                    aria-labelledby="header">
+                        <div data-testid="inner">
+                            <Dialog.Header id="header">{selectedNote.title}</Dialog.Header>
+                            <Box p={3}>
+                                <Text>{selectedNote.content}</Text>
+                            </Box>
+                        </div>
+                </Dialog>
             </Box>
         </Box>
         

@@ -2,29 +2,49 @@ import React, {useState, useEffect} from 'react';
 import './App.css';
 import Register from './components/Register';
 import Login from './components/Login';
-import { BrowserRouter as Router, Route, Routes, Link, Navigate} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import NoteForm from './components/NoteForm';
 import NoteList from './components/NoteList';
-import { BaseStyles, Box, Button, ThemeProvider } from '@primer/react';
+import { BaseStyles, Box, ThemeProvider } from '@primer/react';
+import Nheader from './components/Nheader';
+import axios from 'axios';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [refreshNotes, setRefreshNotes] = useState(0);
+  const [isValidToken, setValidToken] = useState(false)
 
-  useEffect(() => {
-    if(token) {
-      localStorage.setItem('token', token);
-    } else {
-      localStorage.removeItem('token');
+  const validateToken = async (token) => {
+    try {
+      const res = await axios.get('http://localhost:3000/api/validateToken', { headers: { Authorization: `Bearer ${token}`}});
+      return res.data.valid;
+    } catch (err) {
+      console.error('Token validation failed', err)
+      return false;
     }
+  }
+  
+  useEffect(() => {
+    const checkToken = async () => {
+      if(token) {
+        const isValid =  await validateToken(token);
+        if (isValid) {
+          setValidToken(true);
+          localStorage.setItem('token', token)
+        } else {
+          setValidToken(false);
+          localStorage.removeItem('token');
+        }
+      } else {
+        setValidToken(false)
+        localStorage.removeItem('token');
+      }
+    };
+    checkToken();
   }, [token]);
 
   const handleNotAdded = () => {
     setRefreshNotes(prev => prev + 1);
-  }
-
-  const handleLogout = () => {
-    setToken(null);
   }
 
   return (
@@ -37,21 +57,15 @@ function App() {
                 <Route path='/register' element={<Register setToken={setToken}/>} />
                 <Route path='/login' element={<Login setToken={setToken}/>} />
                 <Route path='/notes' element={
-                  token? (
+                  isValidToken? (
                     <>
+                      <Nheader token={token} setToken={setToken} />
                       <NoteForm token={token} onNoteAdded={handleNotAdded} />
                       <NoteList token={token} refreshTrigger={refreshNotes}/>
-                      <button onClick={handleLogout}>Logout</button>
                     </>
                   ) : (
                     <>
                     <Login setToken={setToken}/>
-                    <Button block sx={{
-                      width: '400px',
-                      mx: 'auto',
-                      mt: 3
-                      }}><Link to="/register" style={{ textDecoration: 'none', color: 'inherit'}}>Register</Link>
-                    </Button>
                     </>
                   )
                 } />

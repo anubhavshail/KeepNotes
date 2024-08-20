@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Box, Button, TextInput } from "@primer/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Register = ({setToken}) => {
     const [username, setUserName] = useState('');
@@ -45,6 +45,7 @@ const Register = ({setToken}) => {
                 <TextInput block type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" aria-label="Email" required sx={{ mb: 2 }}/>
                 <TextInput block type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" aria-label="Password" sx={{ mb: 3 }}/>
                 <Button block type="submit" variant="primary">Register</Button>
+                <Button as={Link} to="/login" block variant="outline" sx={{ mt: 3}}>Already have an account? Login</Button>
             </Box>
             
         </Box>
