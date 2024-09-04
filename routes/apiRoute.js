@@ -160,4 +160,24 @@ router.route('/user')
         }
     })
 
+router.route('/user/updatepassword')
+    .post( authenticateToken, async (req, res) => {
+        try {
+            const {oldPass, newPass} = req.body
+            const user = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+
+            if(user.rows.length === 0) return res.status(403).send('Access Denied');
+
+            if(oldPass === user.password) {
+                const passupdate = await pool.query('UPDATE users SET password=$1 WHERE id=$2',[newPass, req.user.id]);
+                res.json(passupdate.rows[0]);
+            }
+            res.status(403).send('Password not matched');
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).send('Server Error');
+        }
+    })
+
 module.exports = router;

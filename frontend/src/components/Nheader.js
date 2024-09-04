@@ -27,6 +27,10 @@ const Nheader = ({token, setToken}) => {
         navigate('/login');
     }
 
+    const handleChangePassword = () => {
+        
+    }
+
     return (
         <Header>
             <Header.Item full>
@@ -64,7 +68,7 @@ const Nheader = ({token, setToken}) => {
                             <Text as='p' sx={{ ml: 4, mb: 0 }}>{user.username}</Text>
                             <Text as='p' sx={{ ml: 4, mt: 0}}>{user.email}</Text>
                             <ActionList.Divider />
-                            <ActionList.Item>Change Password</ActionList.Item>
+                            <ActionList.Item onClick={handleChangePassword}>Change Password</ActionList.Item>
                             <ActionList.Divider />
                             <ActionList.Item variant="danger" onClick={handleLogout}>Logout</ActionList.Item>
                         </ActionList>

@@ -25,13 +25,6 @@ const Login = ({setToken}) => {
         <Box as="form"
         onSubmit={handleSubmit}
         sx={{
-            //p: 3,
-            //borderStyle: 'solid',
-            //borderWidth: 1,
-            //borderRadius: 1,
-            //mx: 'auto',
-            //width: '400px',
-            //bg: "canvas.default"
             display: "flex",
             flexDirection: "column",
             minHeight: '100vh',
